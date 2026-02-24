@@ -4,8 +4,9 @@ services:
   - type: web
     name: work-study-backend
     runtime: docker
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    dockerfilePath: ./work-study-system/backend/Dockerfile
+    dockerContext: ./work-study-system/backend
+    rootDir: work-study-system
     plan: free
     envVars:
       - key: SPRING_PROFILES_ACTIVE
