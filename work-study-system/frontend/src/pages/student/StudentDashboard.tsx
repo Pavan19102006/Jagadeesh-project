@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../../components/Navbar';
 import { dashboardService, StudentDashboard as StudentDashboardData } from '../../services/dashboardService';
-import { Briefcase, FileText, Clock, Star, ArrowRight, TrendingUp, Calendar, Zap } from 'lucide-react';
+import { Briefcase, FileText, Clock, Star, ArrowRight, TrendingUp, Calendar, Zap, LucideProps } from 'lucide-react';
 import { toast } from 'sonner';
 
 // Glassmorphism Card component
@@ -20,7 +20,7 @@ const GlassCard = ({ children, className = '', hover = true }: { children: React
 const StatCard = ({ title, value, icon: Icon, gradient, trend }: {
   title: string;
   value: string | number;
-  icon: React.ElementType;
+  icon: React.FC<LucideProps>;
   gradient: string;
   trend?: string;
 }) => (
@@ -47,7 +47,7 @@ const StatCard = ({ title, value, icon: Icon, gradient, trend }: {
 const QuickLinkCard = ({ title, description, icon: Icon, path, gradient }: {
   title: string;
   description: string;
-  icon: React.ElementType;
+  icon: React.FC<LucideProps>;
   path: string;
   gradient: string;
 }) => {

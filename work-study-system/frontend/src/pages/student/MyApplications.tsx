@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { applicationService, Application } from '../../services/applicationService';
 import { toast } from 'sonner';
-import { Eye, XCircle, FileText, Briefcase } from 'lucide-react';
+import { Eye, XCircle, FileText } from 'lucide-react';
 
 // Glassmorphism Card
 const GlassCard = ({ children, className = '', hover = true }: { children: React.ReactNode; className?: string; hover?: boolean }) => (

@@ -6,14 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
-import { Sparkles, ArrowLeft, Lock, User } from 'lucide-react';
+import { ArrowLeft, Lock, User, Sparkles } from 'lucide-react';
 
 // WebGL Shader Background - OPTIMIZED
 const RESOLUTION_SCALE = 0.4;
 
 const ShaderBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number>(undefined);
 
   useEffect(() => {
     const canvas = canvasRef.current;

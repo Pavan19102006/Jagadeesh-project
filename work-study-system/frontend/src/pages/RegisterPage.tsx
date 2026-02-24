@@ -6,14 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
-import { Sparkles, ArrowLeft, Lock, User, Mail, Phone, Building, UserPlus } from 'lucide-react';
+import { ArrowLeft, Lock, User, Mail, Phone, Building, UserPlus } from 'lucide-react';
 
 // WebGL Shader Background - OPTIMIZED
 const RESOLUTION_SCALE = 0.4;
 
 const ShaderBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number>(undefined);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -118,7 +118,7 @@ const ShaderBackground = () => {
 };
 
 // Glass Input component
-const GlassInput = ({ icon: Icon, ...props }: { icon: React.ElementType } & React.InputHTMLAttributes<HTMLInputElement>) => (
+const GlassInput = ({ icon: Icon, ...props }: { icon: React.ComponentType<{ className?: string }> } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'className'>) => (
   <div className="relative">
     <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
     <Input

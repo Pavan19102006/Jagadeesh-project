@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { jobService, JobPosting, JobPostingRequest } from '../../services/jobService';
-import { Plus, Pencil, Trash2, XCircle, Briefcase, MapPin, DollarSign, Clock, Users as UsersIcon } from 'lucide-react';
+import { Plus, Pencil, Trash2, XCircle, Briefcase, MapPin, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
 
 // Glassmorphism Card
