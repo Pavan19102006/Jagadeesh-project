@@ -1,40 +1,26 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Briefcase, Clock, FileText, GraduationCap, Users, Sparkles, ArrowRight, Star, Zap } from 'lucide-react';
-import { Scene3D } from '@/components/3d';
 
-// Glass Card Component with stagger animation
-const GlassCard = ({ children, className = '', delay = 0 }: {
+// Simple Card Component with clean styling
+const SimpleCard = ({ children, className = '' }: {
   children: React.ReactNode;
   className?: string;
-  delay?: number;
-}) => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), delay);
-    return () => clearTimeout(timer);
-  }, [delay]);
-
-  return (
-    <div
-      className={`
-        relative backdrop-blur-xl bg-white/[0.06] 
-        border border-white/[0.1] rounded-2xl overflow-hidden
-        shadow-[0_8px_32px_rgba(0,0,0,0.3)]
-        hover:shadow-[0_16px_48px_rgba(0,200,255,0.1)]
-        hover:bg-white/[0.08] hover:border-white/[0.15]
-        transition-all duration-500 ease-out
-        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}
-        ${className}
-      `}
-    >
-      <div className="absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-      {children}
-    </div>
-  );
-};
+}) => (
+  <div
+    className={`
+      relative bg-white/[0.06] 
+      border border-white/[0.1] rounded-2xl overflow-hidden
+      shadow-[0_4px_24px_rgba(0,0,0,0.2)]
+      hover:bg-white/[0.09] hover:border-white/[0.15]
+      transition-all duration-300 ease-out
+      ${className}
+    `}
+  >
+    <div className="absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+    {children}
+  </div>
+);
 
 // Gradient text component
 const GradientText = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
@@ -45,23 +31,6 @@ const GradientText = ({ children, className = '' }: { children: React.ReactNode;
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   const features = [
     {
@@ -110,34 +79,12 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen text-white overflow-hidden">
-      {/* 3D Scene Background */}
-      <Scene3D />
-
-      {/* Cursor glow */}
-      <div
-        className="fixed w-80 h-80 rounded-full pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle, rgba(0,212,255,0.1) 0%, transparent 70%)',
-          left: mousePosition.x - 160,
-          top: mousePosition.y - 160,
-          zIndex: 1,
-          transition: 'left 0.15s ease-out, top 0.15s ease-out',
-          filter: 'blur(30px)',
-        }}
-      />
-
+    <div className="min-h-screen text-white overflow-hidden landing-bg">
       {/* Navigation */}
-      <nav
-        className="fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300"
-        style={{
-          backgroundColor: scrollY > 50 ? 'rgba(10,10,26,0.8)' : 'transparent',
-          backdropFilter: scrollY > 50 ? 'blur(20px)' : 'none',
-        }}
-      >
+      <nav className="sticky top-0 z-50 px-6 py-4 bg-slate-900/80 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
             <span className="text-xl font-bold">WorkStudy<span className="text-cyan-400">.</span></span>
@@ -161,30 +108,26 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-20 min-h-screen flex flex-col justify-center">
-        <div className="text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.06] backdrop-blur border border-white/10 mb-8 animate-fade-in">
+      <section className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-20 min-h-[85vh] flex flex-col justify-center">
+        <div className="text-center animate-fade-in-up">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.06] border border-white/10 mb-8">
             <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
             <span className="text-sm text-white/80">Trusted by 500+ students worldwide</span>
             <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
           </div>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight tracking-tight">
-            <span className="inline-block animate-slide-up" style={{ animationDelay: '0.1s' }}>
-              Transform Your
-            </span>
+            Transform Your
             <br />
-            <span className="inline-block animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              <GradientText>Work Experience</GradientText>
-            </span>
+            <GradientText>Work Experience</GradientText>
           </h1>
 
-          <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10 animate-slide-up leading-relaxed" style={{ animationDelay: '0.3s' }}>
+          <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10 leading-relaxed">
             A next-generation platform connecting students with on-campus opportunities.
             Track hours, manage applications, and accelerate your career.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style={{ animationDelay: '0.4s' }}>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
               className="group bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-lg px-8 py-6 rounded-xl shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all duration-300"
@@ -196,7 +139,7 @@ export default function LandingPage() {
             <Button
               size="lg"
               variant="outline"
-              className="text-lg px-8 py-6 rounded-xl border-white/20 text-white hover:bg-white/10 backdrop-blur"
+              className="text-lg px-8 py-6 rounded-xl border-white/20 text-white hover:bg-white/10"
               onClick={() => navigate('/login')}
             >
               Sign In
@@ -207,13 +150,13 @@ export default function LandingPage() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-20">
           {stats.map((stat, index) => (
-            <GlassCard key={index} className="p-6 text-center" delay={500 + index * 100}>
+            <SimpleCard key={index} className="p-6 text-center">
               <div className="text-2xl mb-2">{stat.icon}</div>
               <div className="text-3xl md:text-4xl font-bold mb-1">
                 <GradientText>{stat.value}</GradientText>
               </div>
               <div className="text-white/50 text-sm">{stat.label}</div>
-            </GlassCard>
+            </SimpleCard>
           ))}
         </div>
       </section>
@@ -235,7 +178,7 @@ export default function LandingPage() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, index) => (
-            <GlassCard key={index} className="p-8 group cursor-pointer" delay={index * 80}>
+            <SimpleCard key={index} className="p-8 group cursor-pointer">
               <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                 <feature.icon className="w-7 h-7 text-white" />
               </div>
@@ -245,14 +188,14 @@ export default function LandingPage() {
               <p className="text-white/50 leading-relaxed">
                 {feature.description}
               </p>
-            </GlassCard>
+            </SimpleCard>
           ))}
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="relative z-10 max-w-4xl mx-auto px-6 py-24">
-        <GlassCard className="p-12 text-center">
+        <SimpleCard className="p-12 text-center">
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
             Ready to <GradientText>Get Started?</GradientText>
           </h2>
@@ -276,7 +219,7 @@ export default function LandingPage() {
               Learn More
             </Button>
           </div>
-        </GlassCard>
+        </SimpleCard>
       </section>
 
       {/* Footer */}
@@ -286,22 +229,17 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* Animations */}
+      {/* Simple CSS animations */}
       <style>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(10px); }
+        .landing-bg {
+          background: linear-gradient(135deg, #0a0a1a 0%, #0d1b2a 30%, #1b1040 60%, #0a0a1a 100%);
+        }
+        @keyframes fade-in-up {
+          from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes slide-up {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out forwards;
-        }
-        .animate-slide-up {
-          opacity: 0;
-          animation: slide-up 0.8s ease-out forwards;
+        .animate-fade-in-up {
+          animation: fade-in-up 0.6s ease-out forwards;
         }
       `}</style>
     </div>

@@ -14,7 +14,9 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string, captchaId: string, captchaAnswer: string) => Promise<void>;
+  loginWithOtp: (email: string, otpCode: string) => Promise<void>;
+  loginWithGoogle: (idToken: string) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
@@ -27,6 +29,7 @@ interface RegisterData {
   fullName: string;
   phone?: string;
   department?: string;
+  otpCode: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -44,8 +47,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  const login = async (username: string, password: string) => {
-    const response = await authService.login(username, password);
+  const login = async (username: string, password: string, captchaId: string, captchaAnswer: string) => {
+    const response = await authService.loginWithPassword({
+      username,
+      password,
+      loginMode: 'PASSWORD',
+      captchaId,
+      captchaAnswer,
+    });
+    localStorage.setItem('token', response.token);
+    localStorage.setItem('user', JSON.stringify(response.user));
+    setUser(response.user);
+  };
+
+  const loginWithOtp = async (email: string, otpCode: string) => {
+    const response = await authService.loginWithOtp({
+      email,
+      otpCode,
+      loginMode: 'OTP',
+    });
+    localStorage.setItem('token', response.token);
+    localStorage.setItem('user', JSON.stringify(response.user));
+    setUser(response.user);
+  };
+
+  const loginWithGoogle = async (idToken: string) => {
+    const response = await authService.googleLogin(idToken);
     localStorage.setItem('token', response.token);
     localStorage.setItem('user', JSON.stringify(response.user));
     setUser(response.user);
@@ -65,7 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, loginWithOtp, loginWithGoogle, register, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

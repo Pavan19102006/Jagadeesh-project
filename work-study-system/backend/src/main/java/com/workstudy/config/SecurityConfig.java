@@ -58,6 +58,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> 
                         auth.requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/api/captcha/**").permitAll()
+                                .requestMatchers("/api/otp/**").permitAll()
                                 .requestMatchers("/api/jobs/active").permitAll()
                                 .requestMatchers("/h2-console/**").permitAll()
                                 .anyRequest().authenticated()
