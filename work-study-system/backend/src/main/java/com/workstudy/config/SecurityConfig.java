@@ -80,10 +80,19 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Parse comma-separated origins from config
-        String[] origins = allowedOrigins.split(",");
-        for (String origin : origins) {
-            configuration.addAllowedOrigin(origin.trim());
+        // Always allow these origins (production + dev)
+        configuration.addAllowedOrigin("https://fullstack-project-workstudy.vercel.app");
+        configuration.addAllowedOrigin("http://localhost:5173");
+        configuration.addAllowedOrigin("http://localhost:3000");
+        // Also add any additional origins from env var
+        if (allowedOrigins != null && !allowedOrigins.isBlank()) {
+            String[] origins = allowedOrigins.split(",");
+            for (String origin : origins) {
+                String trimmed = origin.trim();
+                if (!trimmed.isEmpty()) {
+                    configuration.addAllowedOrigin(trimmed);
+                }
+            }
         }
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
