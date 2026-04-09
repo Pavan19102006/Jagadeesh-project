@@ -9,12 +9,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import com.workstudy.repository.ApplicationRepository;
+import com.workstudy.repository.WorkHoursRepository;
+import com.workstudy.repository.FeedbackRepository;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationRepository applicationRepository;
+    private final WorkHoursRepository workHoursRepository;
+    private final FeedbackRepository feedbackRepository;
     
     @Transactional
     public User createStudent(RegisterRequest request) {
@@ -70,6 +76,10 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
     
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
     public List<User> findAllStudents() {
         return userRepository.findAll().stream()
                 .filter(u -> u.getRole() == User.Role.STUDENT)
@@ -80,6 +90,11 @@ public class UserService {
         return userRepository.findAll().stream()
                 .filter(u -> u.getRole() == User.Role.ADMIN)
                 .toList();
+    }
+
+    @Transactional
+    public User saveUser(User user) {
+        return userRepository.save(user);
     }
     
     @Transactional
@@ -97,5 +112,22 @@ public class UserService {
         User user = findById(id);
         user.setActive(false);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void activateUser(Long id) {
+        User user = findById(id);
+        user.setActive(true);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteUser(Long id) {
+        User user = findById(id);
+        // Delete related records first to avoid FK constraint violations
+        applicationRepository.deleteByStudentId(id);
+        workHoursRepository.deleteByStudentId(id);
+        feedbackRepository.deleteByStudentId(id);
+        userRepository.delete(user);
     }
 }

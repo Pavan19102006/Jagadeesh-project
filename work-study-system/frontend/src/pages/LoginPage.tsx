@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { authService } from '../services/authService';
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,18 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
 import { ArrowLeft, Lock, User, Mail, RefreshCw, Shield, KeyRound } from 'lucide-react';
 
-declare global {
-  interface Window {
-    google?: {
-      accounts: {
-        id: {
-          initialize: (config: any) => void;
-          renderButton: (element: HTMLElement, config: any) => void;
-        };
-      };
-    };
-  }
-}
+
 
 type LoginMode = 'password' | 'otp';
 
@@ -47,49 +37,14 @@ export default function LoginPage() {
     setIsVisible(true);
   }, []);
 
-  // Initialize Google Sign-In
-  useEffect(() => {
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    if (!clientId || clientId === 'YOUR_GOOGLE_CLIENT_ID_HERE') return;
-
-    const initGoogle = () => {
-      if (window.google) {
-        window.google.accounts.id.initialize({
-          client_id: clientId,
-          callback: handleGoogleResponse,
-        });
-        const btnEl = document.getElementById('google-signin-btn-login');
-        if (btnEl) {
-          window.google.accounts.id.renderButton(btnEl, {
-            theme: 'filled_black',
-            size: 'large',
-            width: '100%',
-            text: 'signin_with',
-            shape: 'rectangular',
-          });
-        }
-      }
-    };
-
-    // Wait for the Google script to load
-    if (window.google) {
-      initGoogle();
-    } else {
-      const interval = setInterval(() => {
-        if (window.google) {
-          clearInterval(interval);
-          initGoogle();
-        }
-      }, 200);
-      return () => clearInterval(interval);
-    }
-  }, [isVisible]);
-
-  const handleGoogleResponse = async (response: any) => {
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
     setError('');
     setIsLoading(true);
     try {
-      await loginWithGoogle(response.credential);
+      if (!credentialResponse.credential) {
+        throw new Error('No credential received from Google');
+      }
+      await loginWithGoogle(credentialResponse.credential);
       toast.success('Login successful!');
       const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
       navigate(currentUser.role === 'ADMIN' ? '/admin' : '/student');
@@ -486,7 +441,20 @@ export default function LoginPage() {
         </div>
 
         {/* Google Sign-In Button */}
-        <div id="google-signin-btn-login" className="flex justify-center" />
+        <div className="flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => {
+              setError('Google login failed. Please try again.');
+              toast.error('Google login failed');
+            }}
+            theme="filled_black"
+            size="large"
+            shape="rectangular"
+            text="signin_with"
+            width="350"
+          />
+        </div>
 
         <div className="mt-6 text-center text-white/60">
           Don't have an account?{' '}

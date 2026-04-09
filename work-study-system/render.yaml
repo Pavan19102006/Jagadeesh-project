@@ -39,6 +39,14 @@ services:
         fromDatabase:
           name: work-study-db
           property: password
+      - key: GOOGLE_CLIENT_ID
+        value: 283921261171-ffgdpui5v4fpdloht7par9qj948n238t.apps.googleusercontent.com
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://jagadeesh-project.vercel.app,http://localhost:5173
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
 
 databases:
   - name: work-study-db

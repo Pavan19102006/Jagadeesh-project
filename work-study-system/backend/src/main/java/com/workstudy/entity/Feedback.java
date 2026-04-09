@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDateTime;
 
@@ -19,14 +20,17 @@ public class Feedback {
     
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
+    @JsonIgnoreProperties({"password", "authorities", "accountNonExpired", "accountNonLocked", "credentialsNonExpired", "enabled"})
     private User student;
     
     @ManyToOne
     @JoinColumn(name = "job_id", nullable = false)
+    @JsonIgnoreProperties({"postedBy"})
     private JobPosting job;
     
     @ManyToOne
     @JoinColumn(name = "given_by", nullable = false)
+    @JsonIgnoreProperties({"password", "authorities", "accountNonExpired", "accountNonLocked", "credentialsNonExpired", "enabled"})
     private User givenBy;
     
     @Column(nullable = false)

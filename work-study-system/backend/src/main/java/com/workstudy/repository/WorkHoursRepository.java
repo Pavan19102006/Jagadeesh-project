@@ -14,4 +14,5 @@ public interface WorkHoursRepository extends JpaRepository<WorkHours, Long> {
     List<WorkHours> findByStudentIdAndJobId(Long studentId, Long jobId);
     List<WorkHours> findByStatus(WorkHours.Status status);
     List<WorkHours> findByStudentIdAndWorkDateBetween(Long studentId, LocalDate startDate, LocalDate endDate);
+    void deleteByStudentId(Long studentId);
 }

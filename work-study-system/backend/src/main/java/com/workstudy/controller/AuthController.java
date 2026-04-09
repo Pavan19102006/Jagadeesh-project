@@ -167,6 +167,7 @@ public class AuthController {
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     new NetHttpTransport(), GsonFactory.getDefaultInstance())
                     .setAudience(Collections.singletonList(googleClientId))
+                    .setAcceptableTimeSkewSeconds(300) // 5 minutes skew
                     .build();
 
             GoogleIdToken idToken = verifier.verify(request.getIdToken());
@@ -212,6 +213,35 @@ public class AuthController {
         } catch (Exception e) {
             log.error("Google auth failed", e);
             return ResponseEntity.badRequest().body(Map.of("error", "Google authentication failed: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Development/Postman-friendly login endpoint.
+     * Bypasses CAPTCHA validation — use only for local dev/testing with Postman.
+     * Just send { "username": "admin", "password": "admin123" }
+     */
+    @PostMapping("/dev-login")
+    public ResponseEntity<?> devLogin(@RequestBody Map<String, String> request) {
+        String username = request.get("username");
+        String password = request.get("password");
+
+        if (username == null || username.isBlank() || password == null || password.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Username and password are required"));
+        }
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password)
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            User user = userService.findByUsername(username);
+            String token = jwtUtil.generateToken(user);
+
+            return ResponseEntity.ok(new LoginResponse(token, user));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid username or password"));
         }
     }
 }

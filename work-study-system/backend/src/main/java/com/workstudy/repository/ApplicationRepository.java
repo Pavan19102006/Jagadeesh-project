@@ -15,4 +15,5 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     Optional<Application> findByStudentIdAndJobId(Long studentId, Long jobId);
     long countByJobId(Long jobId);
     long countByJobIdAndStatus(Long jobId, Application.Status status);
+    void deleteByStudentId(Long studentId);
 }
